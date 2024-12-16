@@ -1,5 +1,5 @@
 ﻿  main.cpp
-C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(13,6): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
-C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(19,10): warning C4804: <=: небезопасное использование типа "bool" в операции
-C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(71,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(15,6): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(21,10): warning C4804: <=: небезопасное использование типа "bool" в операции
+C:\prog\PSU\logics\lw10\p10_1\p10_1\main.cpp(95,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   p10_1.vcxproj -> C:\prog\PSU\logics\lw10\p10_1\x64\Debug\p10_1.exe

@@ -9,6 +9,8 @@ int** create_adjacency_matrix(int v, int type);
 int cout_matrix(int** G, int v);
 
 void BFSD(int** g, int v, int size, bool* vis, int* dis);
+int min_element(int* vec, int size);
+int max_element(int* vec, int size);
 
 void main()
 {
@@ -27,8 +29,10 @@ void main()
 
 	int** distance = new int*[size];
 	bool** visited = new bool*[size];
+	int* eccentricities = new int[size];
 	for (int i = 0; i < size; i++)
 	{
+		eccentricities[i] = 0;
 		distance[i] = new int[size];
 		visited[i] = new bool[size];
 		for (int j = 0; j < size; j++) 
@@ -55,7 +59,12 @@ void main()
 			cout << distance[i][j] << "	";
 		}
 		cout << endl;
+		eccentricities[i] = max_element(distance[i], size);
 	}
+
+	int diameter = max_element(eccentricities, size), radius = min_element(eccentricities, size);
+
+	cout << endl << "diameter = " << diameter << endl << "radius = " << radius << endl << endl;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -209,4 +218,30 @@ void BFSD(int** g, int v, int size, bool* vis, int* dis)
 			}
 		}
 	}
+}
+
+int min_element(int* vec, int size)
+{
+	int min_element = INT_MAX;
+	for (int i = 0; i < size; i++)
+	{
+		if (min_element > vec[i])
+		{
+			min_element = vec[i];
+		}
+	}
+	return min_element;
+}
+
+int max_element(int* vec, int size) 
+{
+	int max_element = INT_MIN;
+	for (int i = 0; i < size; i++) 
+	{
+		if ((max_element < vec[i]) && (vec[i] != INT_MAX))
+		{
+			max_element = vec[i];
+		}
+	}
+	return max_element;
 }
