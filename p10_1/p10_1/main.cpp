@@ -1,13 +1,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <queue>
+#include <vector>
 
 using namespace std;
 
 int** create_adjacency_matrix(int v);
 int cout_matrix(int** G, int v);
 
-void BFSD(int** G, int v, int start, int* distance);
+void BFSD(int** g, int v, int size, bool* vis, int* dis);
 
 void main()
 {
@@ -24,12 +25,14 @@ void main()
 	cin >> start;
 
 	int* distance = new int[size];
+	bool* visited = new bool[size];
 	for (int i = 0; i < size; i++)
 	{
-		distance[i] = -1;
+		visited[i] = 0;
+		distance[i] = 0;
 	}
 
-	BFSD(M, size, start, distance);
+	BFSD(M, start, size, visited, distance);
 
 	cout << endl << endl << "  Depth of vertexes: " << endl;
 	cout << "vertex		distance" << endl;
@@ -37,8 +40,7 @@ void main()
 	{
 		cout << "  " << i << "		  " << distance[i] << endl;
 	}
-
-	delete[] distance;
+	
 	for (int i = 0; i < size; i++)
 	{
 		delete[] M[i];
@@ -72,7 +74,7 @@ int** create_adjacency_matrix(int v)
 			}
 			else
 			{
-				G[i][j] = (rand() % 10 + 1);
+				G[i][j] = (rand() % 10) + 1;
 			}
 		}
 	}
@@ -100,24 +102,25 @@ int cout_matrix(int** g, int v)
 	return 1;
 }
 
-void BFSD(int** G, int v, int start, int* distance)
+void BFSD(int** g, int v, int size, bool* vis, int* dis)
 {
 	queue<int> q;
-	q.push(start);
-	distance[start] = 0;
+	q.push(v);
+	vis[v] = 1;
+	dis[v] = 0;
 
 	while (!q.empty())
 	{
-		int current = q.front();
+		v = q.front();
 		q.pop();
-		cout << "Visiting vertex " << current << endl;
-
-		for (int i = 0; i < v; i++)
+		cout << v << " -> ";
+		for (int i = 0; i < size; i++)
 		{
-			if (G[current][i] > 0 && distance[i] == -1)
+			if (g[v][i] >= 1 && !vis[i])
 			{
+				dis[i] = dis[v] + g[v][i];
+				vis[i] = 1;
 				q.push(i);
-				distance[i] = distance[current] + G[current][i];
 			}
 		}
 	}
