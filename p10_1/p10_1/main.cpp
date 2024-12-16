@@ -66,6 +66,17 @@ void main()
 
 	cout << endl << "diameter = " << diameter << endl << "radius = " << radius << endl << endl;
 
+	for (int i = 0; i < size; i++) {
+		if (eccentricities[i] == diameter)
+		{
+			cout << i << " vertex is a peripheral vertex." << endl;
+		}
+		if (eccentricities[i] == radius)
+		{
+			cout << i << " vertex is a central vertex." << endl;
+		}
+	}
+
 	for (int i = 0; i < size; i++)
 	{
 		delete[] M[i];
