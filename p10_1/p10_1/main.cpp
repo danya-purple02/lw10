@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include <string>
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -12,18 +13,28 @@ void BFSD(int** g, int v, int size, bool* vis, int* dis);
 int min_element(int* vec, int size);
 int max_element(int* vec, int size);
 
-void main()
+int main(int argc, char* argv[])
 {
 	int size = 0, type_of_matrix = 0;
-	cout << "Input first graph size: "; cin >> size; cout << endl;
-	cout << "Choose type of graph: " << endl << " 0 - Unweighted Undirected | 1 - Unweighted Directed " << endl << " 2 - Weighted Undirected | 3 - Weighted Directed " << endl;
-	cin >> type_of_matrix;
-	if (!(0 <= type_of_matrix <= 3)) 
+	if (argc < 0) 
 	{
-		cout << endl << "Error. Must type 0 to 3." << endl;
-		return;
+		cout << "Parameters error. Input parameters." << endl << endl;
+		size = 0, type_of_matrix = 0;
+		cout << "Input first graph size: "; cin >> size; cout << endl;
+		cout << "Choose type of graph: " << endl << " 0 - Unweighted Undirected | 1 - Unweighted Directed " << endl << " 2 - Weighted Undirected | 3 - Weighted Directed " << endl;
+		cin >> type_of_matrix;
+		if (!(0 <= type_of_matrix <= 3))
+		{
+			cout << endl << "Error. Must type 0 to 3." << endl;
+			return 0;
+		}
 	}
-
+	else 
+	{
+		size = stoi(argv[1]);
+		type_of_matrix = stoi(argv[2]);
+	}
+	
 	int** M = create_adjacency_matrix(size, type_of_matrix);
 	cout_matrix(M, size);
 
@@ -87,7 +98,7 @@ void main()
 	delete[] distance;
 	delete[] visited;
 
-	return;
+	return 1;
 }
 
 int** create_adjacency_matrix(int v, int type)
