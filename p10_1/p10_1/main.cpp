@@ -5,52 +5,72 @@
 
 using namespace std;
 
-int** create_adjacency_matrix(int v);
+int** create_adjacency_matrix(int v, int type);
 int cout_matrix(int** G, int v);
 
 void BFSD(int** g, int v, int size, bool* vis, int* dis);
 
 void main()
 {
-	int size = 0;
-	cout << "input first graph size: ";
-	cin >> size;
-	cout << endl;
+	int size = 0, type_of_matrix = 0;
+	cout << "Input first graph size: "; cin >> size; cout << endl;
+	cout << "Choose type of graph: " << endl << " 0 - Unweighted Undirected | 1 - Unweighted Directed " << endl << " 2 - Weighted Undirected | 3 - Weighted Directed " << endl;
+	cin >> type_of_matrix;
+	if (!(0 <= type_of_matrix <= 3)) 
+	{
+		cout << endl << "Error. Must type 0 to 3." << endl;
+		return;
+	}
 
-	int** M = create_adjacency_matrix(size);
+	int** M = create_adjacency_matrix(size, type_of_matrix);
 	cout_matrix(M, size);
 
-	int start;
-	cout << "Enter the start vertex for BFS: ";
-	cin >> start;
-
-	int* distance = new int[size];
-	bool* visited = new bool[size];
+	int** distance = new int*[size];
+	bool** visited = new bool*[size];
 	for (int i = 0; i < size; i++)
 	{
-		visited[i] = 0;
-		distance[i] = 0;
-	}
-
-	BFSD(M, start, size, visited, distance);
-
-	cout << endl << endl << "  Depth of vertexes: " << endl;
-	cout << "vertex		distance" << endl;
-	for (int i = 0; i < size; i++)
-	{
-		cout << "  " << i << "		  " << distance[i] << endl;
+		distance[i] = new int[size];
+		visited[i] = new bool[size];
+		for (int j = 0; j < size; j++) 
+		{
+			distance[i][j] = 0;
+			visited[i][j] = 0;
+		}
 	}
 	
+	cout << endl << "distance: " << endl;
+	cout << "	";
+	for (int i = 0; i < size; i++) 
+	{
+		cout << i << "	";
+	}
+	cout << endl << endl;
+
+	for (int i = 0; i < size; i++) 
+	{
+		BFSD(M, i, size, visited[i], distance[i]);
+		cout << i << "	";
+		for (int j = 0; j < size; j++) 
+		{
+			cout << distance[i][j] << "	";
+		}
+		cout << endl;
+	}
+
 	for (int i = 0; i < size; i++)
 	{
 		delete[] M[i];
+		delete[] distance[i];
+		delete[] visited[i];
 	}
 	delete[] M;
+	delete[] distance;
+	delete[] visited;
 
 	return;
 }
 
-int** create_adjacency_matrix(int v)
+int** create_adjacency_matrix(int v, int type)
 {
 	srand(time(NULL));
 	int** G = new int* [v];
@@ -60,22 +80,87 @@ int** create_adjacency_matrix(int v)
 		G[i] = new int[v];
 	}
 
-	for (int i = 0; i < v; i++)
+	switch (type) 
 	{
-		for (int j = 0; j < v; j++)
+		case 0: // unweighted undirected
 		{
-			if (i == j)
+			for (int i = 0; i < v; i++)
 			{
-				G[i][j] = 0;
+				for (int j = 0; j < v; j++)
+				{
+					if (i == j)
+					{
+						G[i][j] = 0;
+					}
+					else if (j < i)
+					{
+						G[i][j] = G[j][i];
+					}
+					else
+					{
+						G[i][j] = rand() % 2;
+					}
+				}
 			}
-			else if (j < i)
+			break;
+		}
+		case 1: // unweighted directed
+		{
+			for (int i = 0; i < v; i++)
 			{
-				G[i][j] = G[j][i];
+				for (int j = 0; j < v; j++)
+				{
+					if (i == j)
+					{
+						G[i][j] = 0;
+					}
+					else
+					{
+						G[i][j] = rand() % 2;
+					}
+				}
 			}
-			else
+			break;
+		}
+		case 2: // weighted undirected
+		{
+			for (int i = 0; i < v; i++)
 			{
-				G[i][j] = (rand() % 10) + 1;
+				for (int j = 0; j < v; j++)
+				{
+					if (i == j)
+					{
+						G[i][j] = 0;
+					}
+					else if (j < i)
+					{
+						G[i][j] = G[j][i];
+					}
+					else
+					{
+						G[i][j] = (rand() % 10) + 1;
+					}
+				}
 			}
+			break;
+		}
+		case 3: // weighted directed
+		{
+			for (int i = 0; i < v; i++)
+			{
+				for (int j = 0; j < v; j++)
+				{
+					if (i == j)
+					{
+						G[i][j] = 0;
+					}
+					else
+					{
+						G[i][j] = (rand() % 10) + 1;
+					}
+				}
+			}
+			break;
 		}
 	}
 
@@ -113,10 +198,10 @@ void BFSD(int** g, int v, int size, bool* vis, int* dis)
 	{
 		v = q.front();
 		q.pop();
-		cout << v << " -> ";
+
 		for (int i = 0; i < size; i++)
 		{
-			if (g[v][i] >= 1 && !vis[i])
+			if (g[v][i] > 0 && !vis[i])
 			{
 				dis[i] = dis[v] + g[v][i];
 				vis[i] = 1;
