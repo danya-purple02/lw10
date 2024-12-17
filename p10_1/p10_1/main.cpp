@@ -9,7 +9,7 @@ using namespace std;
 int** create_adjacency_matrix(int v, int type);
 int cout_matrix(int** G, int v);
 
-void BFSD(int** g, int v, int size, bool* vis, int* dis);
+void BFSD(int** g, int v, int size, int* dis);
 int min_element(int* vec, int size);
 int max_element(int* vec, int size);
 
@@ -39,17 +39,14 @@ int main(int argc, char* argv[])
 	cout_matrix(M, size);
 
 	int** distance = new int*[size];
-	bool** visited = new bool*[size];
 	int* eccentricities = new int[size];
 	for (int i = 0; i < size; i++)
 	{
 		eccentricities[i] = 0;
 		distance[i] = new int[size];
-		visited[i] = new bool[size];
 		for (int j = 0; j < size; j++) 
 		{
-			distance[i][j] = 0;
-			visited[i][j] = 0;
+			distance[i][j] = INT_MAX;
 		}
 	}
 	
@@ -63,7 +60,7 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < size; i++) 
 	{
-		BFSD(M, i, size, visited[i], distance[i]);
+		BFSD(M, i, size, distance[i]);
 		cout << i << "	";
 		for (int j = 0; j < size; j++) 
 		{
@@ -75,6 +72,11 @@ int main(int argc, char* argv[])
 
 	int diameter = max_element(eccentricities, size), radius = min_element(eccentricities, size);
 
+	cout << endl << "eccentricities: " << endl << "	";
+	for (int i = 0; i < size; i++) 
+	{
+		cout << eccentricities[i] << "	";
+	}
 	cout << endl << "diameter = " << diameter << endl << "radius = " << radius << endl << endl;
 
 	for (int i = 0; i < size; i++) {
@@ -92,11 +94,9 @@ int main(int argc, char* argv[])
 	{
 		delete[] M[i];
 		delete[] distance[i];
-		delete[] visited[i];
 	}
 	delete[] M;
 	delete[] distance;
-	delete[] visited;
 
 	return 1;
 }
@@ -141,14 +141,7 @@ int** create_adjacency_matrix(int v, int type)
 			{
 				for (int j = 0; j < v; j++)
 				{
-					if (i == j)
-					{
-						G[i][j] = 0;
-					}
-					else
-					{
-						G[i][j] = rand() % 2;
-					}
+					G[i][j] = (i == j) ? rand() % 2 : 0;
 				}
 			}
 			break;
@@ -181,14 +174,7 @@ int** create_adjacency_matrix(int v, int type)
 			{
 				for (int j = 0; j < v; j++)
 				{
-					if (i == j)
-					{
-						G[i][j] = 0;
-					}
-					else
-					{
-						G[i][j] = (rand() % 10) + 1;
-					}
+					G[i][j] = (i == j) ? (rand() % 10) + 1 : 0;
 				}
 			}
 			break;
@@ -218,11 +204,10 @@ int cout_matrix(int** g, int v)
 	return 1;
 }
 
-void BFSD(int** g, int v, int size, bool* vis, int* dis)
+void BFSD(int** g, int v, int size, int* dis)
 {
 	queue<int> q;
 	q.push(v);
-	vis[v] = 1;
 	dis[v] = 0;
 
 	while (!q.empty())
@@ -232,10 +217,9 @@ void BFSD(int** g, int v, int size, bool* vis, int* dis)
 
 		for (int i = 0; i < size; i++)
 		{
-			if (g[v][i] > 0 && !vis[i])
+			if (g[v][i] > 0 && dis[i] > dis[v] + g[v][i]) 
 			{
 				dis[i] = dis[v] + g[v][i];
-				vis[i] = 1;
 				q.push(i);
 			}
 		}
